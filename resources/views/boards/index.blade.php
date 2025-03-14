@@ -19,16 +19,19 @@
 
     <div class="container mt-4">
 
+        <div class="d-flex">
+            <h2>Link</h2>
+        </div>
+
         @if (isset($links) && $links->isNotEmpty())
-        @dd($links)
-            <div class="d-flex flex-wrap">
+            <div class="d-flex flex-wrap ms-5">
+
                 @foreach ($links as $link)
                     <div class="m-2">
-                        <button>
-                            <a href="{{ $link->address }}" target="_blank">
-                               
-                                 alt="Icon"
-                                    style="width: 30px; height: 30px;">
+                        <button class="btn btn-index  me-2">
+                            <a class="index-button" href="{{ $link->address }}" target="_blank">
+                                <img src="{{ asset('storage/' . ($link->icon ? $link->icon->ikon_image : 'icons/default_1740837631.png')) }}"
+                                    alt="Icon" style="width: 30px; height: 30px;">
                                 {{ $link->name }}
                             </a>
                         </button>
@@ -38,6 +41,7 @@
         @else
             <p>データがありません。</p>
         @endif
+        <br>
 
         <div class="d-flex">
             <h2>全社共通通知</h2>
@@ -50,15 +54,14 @@
                 <a class="index-button" href="{{ route('boards.create') }}">新規登録</a>
             </button>
 
-            <button class="btn  {{ request('createid') ? 'btn-warning' : 'btn-index' }} me-2">
-                <a href="{{ route('boards.index', array_merge(request()->query(), ['createid' => request('createid') ? null : 1])) }}"
-                    class="index-button">作成一覧
-                </a>
+            <button class="btn {{ request('createid') ? 'btn-warning' : 'btn-index' }} me-2">
+                <a href="{{ route('boards.index', array_merge(request()->except('page'), ['createid' => request('createid') ? null : 1])) }}"
+                   class="index-button">作成一覧</a>
             </button>
 
 
             <button class="btn  {{ request('favorites') ? 'btn-warning' : 'btn-index' }} me-2">
-                <a href="{{ route('boards.index', array_merge(request()->query(), ['favorites' => request('favorites') ? null : 1])) }}"
+                <a href="{{ route('boards.index', array_merge(request()->except('page'), ['favorites' => request('favorites') ? null : 1])) }}"
                     class="index-button">
                     <i class="fa-solid fa-star me-1"></i>
                     お気に入り
@@ -98,11 +101,11 @@
                     {{-- style="max-height: 400px; overflow-y: auto;"　でスクロールバー --}}
                     <div class="list-group" style="max-height: 400px; overflow-y: auto;">
                         <a href="{{ route('boards.index') }}"
-                            class="list-group-item list-group-item-success {{ request('department') ? '' : 'active' }}">全部署</a>
+                            class="text-center list-group-item list-group-item-success {{ request('department') ? '' : 'active' }}">全部署</a>
                         @foreach ($departments as $department)
                             @if (!empty($department->id))
                                 <a href="{{ route('boards.index', ['department' => $department->id]) }}"
-                                    class="list-group-item list-group-item-success {{ request('department') == $department->id ? 'active' : '' }}">{{ $department->department_name }}</a>
+                                    class="text-center list-group-item list-group-item-success {{ request('department') == $department->id ? 'active' : '' }}">{{ $department->department_name }}</a>
                             @endif
                         @endforeach
                     </div>
@@ -112,7 +115,7 @@
                 <div class="col-md-10">
                     <table class="table  table-bordered table-striped  rounded">
                         <thead class="table-success">
-                            <tr>
+                            <tr class="text-center">
                                 <th>NEW</th>
                                 <th><i class="fa-solid fa-star"></i></th>
                                 <th>登録日</th>
@@ -124,13 +127,13 @@
                         <tbody>
                             @foreach ($boards as $board)
                                 <tr>
-                                    <td class="text-danger fw-bold">
+                                    <td class="text-danger fw-bold text-center">
                                         {{--  now()->subWeek() で1週間前の日付を取得 --}}
                                         @if ($board->updated_at >= now()->subWeek())
                                             NEW
                                         @endif
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @php
                                             $isFavorite = Auth::user()->bd_boards->contains($board->id);
                                         @endphp
@@ -159,14 +162,14 @@
                                         @endif
                                     </td>
 
-                                    <td><a href="{{ route('boards.show', $board) }}"
+                                    <td class="text-center"><a href="{{ route('boards.show', $board) }}"
                                             class="index-tbody">{{ $board->updated_at->format('Y年m月d日') }}</a>
                                     </td>
                                     <td><a href="{{ route('boards.show', $board) }}"
                                             class="index-tbody">{{ $board->title }}</a></td>
-                                    <td><a href="{{ route('boards.show', $board) }}"
+                                    <td class="text-center"><a href="{{ route('boards.show', $board) }}"
                                             class="index-tbody">{{ $board->user_name }}</a></td>
-                                    <td><a href="{{ route('boards.show', $board) }}"
+                                    <td class="text-center"><a href="{{ route('boards.show', $board) }}"
                                             class="index-tbody">{{ $board->department_name }}</a>
                                     </td>
                                 </tr>

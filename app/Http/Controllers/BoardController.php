@@ -6,6 +6,7 @@ use App\Models\Board;
 use App\Models\Department;
 use App\Models\Image;
 use Illuminate\Http\Request;
+use App\Models\LinkUrl;
 use Illuminate\Support\Facades\Auth;
 // Storage は Laravel のファイル管理（ファイルの保存・取得・削除など）を扱うためのファサード です。
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,8 @@ class BoardController extends Controller
         $departmentId = $request->department; // 部署フィルタリング用
         $createId = $request->has('createid'); //  作成者フィルタリング
         $favoritesOnly = $request->has('favorites'); // お気に入りフィルタリング
-        
+        $links = LinkUrl::with('icon')->get(); //ハイパーリンク
+
 
         // edit.blade.php からの戻り判定用（session の値を取得）
         $boardId = session('previous_board_id');
@@ -55,8 +57,7 @@ class BoardController extends Controller
 
         // 日付検索：開始日（date_from）と終了日（date_to）の範囲検索（キーワードがなくても日付検索を行う）
         if ($request->filled('date_from') && $request->filled('date_to')) {
-            $query->whereBetween('created_at', [$request->date_from, $request->date_to])
-                ->orWhereBetween('updated_at', [$request->date_from, $request->date_to]);
+            $query->whereBetween('updated_at', [$request->date_from, $request->date_to]);
         }
 
         // 作成者のみ表示フィルター
@@ -86,7 +87,7 @@ class BoardController extends Controller
         $departments = Department::all();
 
         // compact() を使い、取得したデータをビュー (boards.index) に渡す
-        return view('boards.index', compact('boards', 'department', 'departments', 'keyword',));
+        return view('boards.index', compact('boards', 'department', 'departments', 'keyword', 'links'));
     }
 
 
@@ -127,6 +128,8 @@ class BoardController extends Controller
         // where('id', $request->department_id) を使い、ユーザーが選択した部署（department_id）を絞り込む。
         $department = $user->dpm_departments()->where('departments.id', $request->department_id)->first();
 
+
+
         // データーベースに保存
         $board = Board::create([
             'user_id' => $user->id,
@@ -147,12 +150,12 @@ class BoardController extends Controller
                     // ファイル名をユニークにする
                     date_default_timezone_set('Asia/Tokyo');
                     $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('public/uploads', $fileName);
+                    $filePath = $file->storeAs('public/files', $fileName);
 
                     // `images` テーブルに保存
                     Image::create([
                         'board_id' => $board->id,
-                        'file_path' => 'storage/uploads/' . $fileName,
+                        'file_path' => 'storage/files/' . $fileName,
                     ]);
                 }
             }
@@ -254,11 +257,11 @@ class BoardController extends Controller
             foreach ($request->file('file') as $file) {
                 if ($file->isValid()) {
                     $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('public/uploads', $fileName);
+                    $filePath = $file->storeAs('public/files', $fileName);
 
                     Image::create([
                         'board_id' => $board->id,
-                        'file_path' => 'storage/uploads/' . $fileName,
+                        'file_path' => 'storage/files/' . $fileName,
                     ]);
                 }
             }

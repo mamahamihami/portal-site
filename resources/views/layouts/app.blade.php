@@ -17,7 +17,7 @@
     {{-- JavaScript（jQuery使用） --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <link rel="stylesheet" href="{{ asset('css/samuraimart.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 </head>
 
@@ -26,7 +26,7 @@
         @component('components.header')
         @endcomponent
 
-        <main class="py-4">
+        <main class="py-1">
             @yield('content')
         </main>
 

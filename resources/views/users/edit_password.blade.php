@@ -27,8 +27,8 @@
 
                         <div class="col-md-7">
                             <input id="password" type="password"
-                                class="form-control @error('password') is-invalid @enderror samuraimart-login-input"
-                                name="password" required autocomplete="new-password">
+                                class="form-control @error('password') is-invalid @enderror" name="password" required
+                                autocomplete="new-password">
 
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
@@ -43,8 +43,8 @@
                             class="col-md-5 col-form-label text-md-left fw-medium">新しいパスワード（確認用）</label>
 
                         <div class="col-md-7">
-                            <input id="password-confirm" type="password" class="form-control samuraimart-login-input"
-                                name="password_confirmation" required autocomplete="new-password">
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
+                                required autocomplete="new-password">
                         </div>
                     </div>
 

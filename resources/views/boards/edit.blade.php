@@ -3,21 +3,22 @@
 @extends('layouts.app')
 
 @section('content')
+
+    {{-- バリデーション表示 --}}
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+
     <div class="container">
         <h1>全社共通通知 投稿編集</h1>
 
-        {{-- バリデーション表示 --}}
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-       
         <a
             href="{{ session('previous_board_id') ? route('boards.show', ['board' => session('previous_board_id')]) : route('boards.index') }}">
             前のページに戻る
@@ -52,8 +53,8 @@
                     @foreach ($board->images as $image)
                         <div class="file-item">
                             <a href="{{ asset($image->file_path) }}" target="_blank">{{ basename($image->file_path) }}</a>
-                            <button type="button" class="btn btn-danger btn-sm remove-file"
-                                data-file-id="{{ $image->id }}">削除</button>
+                            <button type="submit" class="btn btn-danger btn-sm remove-file"
+                                data-file-id="{{ $image->id }}" onclick="return confirm('本当に削除しますか？')">削除</button>
                         </div>
                     @endforeach
                 </div>
@@ -92,12 +93,18 @@
         {{-- image削除機能 --}}
         <script>
             $(document).ready(function() {
-                $(".remove-file").click(function() {
+                $(".remove-file").click(function(event) {
+                    event.preventDefault(); // フォームのデフォルト動作を防ぐ
+
+                    if (!confirm("本当に削除しますか？")) {
+                        return; // 「いいえ」を押したら処理を中断
+                    }
+
                     let fileId = $(this).data("file-id");
                     let fileItem = $(this).closest(".file-item");
 
                     $.ajax({
-                        url: "{{ route('images.destroy') }}",
+                        url: "{{ route('images.destroy') }}", // ルートを適切に設定
                         type: "POST",
                         data: {
                             _method: "DELETE",
@@ -105,7 +112,7 @@
                             file_id: fileId
                         },
                         success: function(response) {
-                            fileItem.remove();
+                            fileItem.remove(); // 削除成功時に要素を削除
                         },
                         error: function(xhr) {
                             alert("ファイル削除に失敗しました。");
@@ -114,6 +121,7 @@
                 });
             });
         </script>
+        
         {{--　image追加ボタン --}}
         <script>
             document.getElementById('add-file').addEventListener('click', function() {

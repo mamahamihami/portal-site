@@ -10,8 +10,8 @@
             <p class="text-success">{{ session('flash_message') }}</p>
         @endif
 
-        
-        <a href="{{ session('current_page') ? route('boards.index') . '?page=' . session('current_page') : route('boards.show', ['board' => $board->id]) }}">
+        <a
+            href="{{ session('current_page') ? route('boards.index') . '?page=' . session('current_page') : route('boards.show', ['board' => $board->id]) }}">
             前のページに戻る
         </a>
 

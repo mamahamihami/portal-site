@@ -62,7 +62,7 @@ return [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'visibility' => 'public',
-            'url' => env('APP_URL') . '/storage',
+            'url' => env('APP_URL') . '/portal-site/public/storage',
         ],
 
     ],

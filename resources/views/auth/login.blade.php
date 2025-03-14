@@ -13,7 +13,7 @@
     {{-- Font Awesome --}}
     <script src="https://kit.fontawesome.com/9176734696.js" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="{{ asset('css/samuraimart.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 </head>
 
@@ -34,6 +34,10 @@
                 <div class="col-md-4">
                     <h1 class="mb-3">ログイン</h3>
 
+                        @if ($errors->has('employee_number'))
+                            <div class="error">{{ $errors->first('employee_number') }}</div>
+                        @endif
+
                         <hr class="mb-4">
 
                         <form method="POST" action="{{ route('login') }}">
@@ -44,36 +48,25 @@
                                 <label>社員番号</label>
 
                                 <input id="employee_number" type="text"
-                                    class="form-control @error('employee_number') is-invalid @enderror samuraimart-login-input"
+                                    class="form-control @error('employee_number') is-invalid @enderror login-input"
                                     name="employee_number" value="{{ old('employee_number') }}" required
-                                    autocomplete="username" autofocus>
-                                @error('employee_number')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>社員番号が正しくない可能性があります。</strong>
-                                    </span>
-                                @enderror
 
-                                {{-- <x-text-input id="employee_number" class="block mt-1 w-full" type="text" --}}
-                                {{-- name="employee_number" :value="old('employee_number')" required autofocus autocomplete="username" /> --}}
-                                {{-- <x-input-error :messages="$errors->get('employee_number')" class="mt-2" /> --}}
                             </div>
 
                             <!-- Password -->
                             <div class="form-group mb-3">
                                 <label>パスワード</label>
+
                                 <input id="password" type="password"
-                                    class="form-control @error('password') is-invalid @enderror samuraimart-login-input"
+                                    class="form-control @error('password') is-invalid @enderror login-input"
                                     name="password" required autocomplete="current-password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>パスワードが正しくない可能性があります。</strong>
+                                        <strong>社員番号又はパスワードが正しくない可能性があります。</strong>
                                     </span>
                                 @enderror
-                                {{-- <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" --}}
-                                {{-- required autocomplete="current-password" /> --}}
 
-                                {{-- <x-input-error :messages="$errors->get('password')" class="mt-2" /> --}}
                             </div>
 
                             <!-- Remember Me -->
@@ -87,32 +80,10 @@
                                     </label>
                                 </div>
                             </div>
-                            {{-- <div class="block mt-4"> --}}
-                            {{-- <label for="remember_me" class="inline-flex items-center"> --}}
-                            {{-- <input id="remember_me" type="checkbox" --}}
-                            {{-- class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" --}}
-                            {{-- name="remember"> --}}
-                            {{-- <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span> --}}
-                            {{-- </label> --}}
-                            {{-- </div> --}}
-
-                            {{-- <div class="flex items-center justify-end mt-4"> 
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif --}}
 
                             <button type="submit" class="btn samuraimart-submit-button w-100 text-white mb-4">
                                 ログイン
                             </button>
-
-
-                            {{-- <div class="flex justify-center"> --}}
-                            {{-- <x-primary-button class="ml-3 bg-green-500 hover:bg-green-600 text-white"> --}}
-                            {{-- {{ __('Log in') }} --}}
-                            {{-- </x-primary-button> --}}
-                            {{-- </div> --}}
 
                         </form>
 

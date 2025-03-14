@@ -29,11 +29,21 @@ class LinkUrlController extends AdminController
         $grid = new Grid(new LinkUrl());
 
         $grid->column('id', __('Id'))->sortable();
-        $grid->column('link_icon_id', 'アイコン')->image('', 50, 50);
+        $grid->column('link_icon_id', 'アイコン')->display(function ($link_icon_id) {
+            // もしアイコンが存在する場合はその画像を表示、なければデフォルト画像を表示
+            $icon = \App\Models\LinkIcon::find($link_icon_id);
+            $iconImage = $icon && $icon->ikon_image ? $icon->ikon_image : 'icons/default_1740837631.png';
+
+            return "<img src='" . asset('storage/' . $iconImage) . "' width='20' height='20'>";
+        });
         $grid->column('name', 'リンク名');
         $grid->column('address', 'URL');
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Created at'))->display(function ($time) {
+            return $time ? date("Y/m/d H:i:s", strtotime($time)) : '';
+        });
+        $grid->column('updated_at', __('Updated at'))->display(function ($time) {
+            return $time ? date("Y/m/d H:i:s", strtotime($time)) : '';
+        });
 
         return $grid;
     }
@@ -75,18 +85,18 @@ class LinkUrlController extends AdminController
             // $image がすでに icons/ を含んでいる場合、そのまま使う
             $iconPath = strpos($image, 'icons/') === false ? 'icons/' . $image : $image;
 
-
-            $iconOptions[$id] = "<img src='" . asset("storage/icons/$image") . "' width='50' height='50' style='border-radius:5px;'> $image";
+            // セレクトボックスで画像を表示できるように、オプションを HTML フォーマットにする
+            $iconOptions[$id] = "<img src=" . asset('storage/' . $iconPath) . "> $image";
         }
-
 
         // セレクトボックスの表示部分
         $form->select('link_icon_id', 'アイコン')
             ->options($iconOptions)
             ->setLabelClass(['custom-icon-select'])
-            ->attribute(['data-html' => 'true']);  // HTMLを有効化
-        $form->text('name', 'リンク名');
-        $form->text('address', 'URL');
+            ->attribute(['data-html' => 'true'])
+            ->help('default_1740837631.pngを使用する場合は入力不要  変更する場合はアイコンを登録してください');  // HTMLを有効化
+        $form->text('name', 'リンク名')->rules('required');
+        $form->text('address', 'URL')->rules('required');
 
 
         return $form;

@@ -27,22 +27,28 @@ class LoginController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput(); //withInput()入力した（employee_number）を保持　パスワードはクリア
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         // 社員番号とパスワードで認証
-        $user = User::where('employee_number', $request->employee_number)->first();
+        $credentials = [
+            'employee_number' => $request->employee_number,
+            'password' => $request->password,
+        ];
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return redirect()->back()->withErrors(['employee_number' => '社員番号またはパスワードが間違っています。'])->withInput();
+        $remember = $request->filled('remember'); // チェックボックスの値を取得
+
+        if (Auth::attempt($credentials, $remember)) {
+            $user = Auth::user();
+
+            if ($user->new_flag) {
+                return redirect()->route('edit_password');
+            }
+
+            return redirect()->route('boards.index'); // ログイン後のリダイレクト先
         }
 
-        // ログイン処理
-        Auth::login($user);
-
-        //return view('index'); //test
-
-        return redirect()->route('boards.index'); // ログイン後のリダイレクト先
+        return redirect()->back()->withErrors(['employee_number' => '社員番号またはパスワードが間違っています。'])->withInput();
     }
 
     // ログアウト処理

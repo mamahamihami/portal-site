@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 // ソート機能追加
 use Kyslik\ColumnSortable\Sortable;
@@ -11,7 +12,10 @@ use Kyslik\ColumnSortable\Sortable;
 class Board extends Model
 {
     // Kyslik/column-sortableライブラリー追加して Sortble追加
-    use HasFactory, Sortable;
+    use HasFactory, Sortable, SoftDeletes;
+
+    // 論理削除カラム(deleted_at)が日付(Datetime型)であることを宣言
+    protected $dates = ['deleted_at'];
 
     // Board モデルに、保存するカラムが fillable に追加されていないと保存できません。
     protected $fillable = [

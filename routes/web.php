@@ -21,7 +21,7 @@ use App\Models\Board;
 |
 */
 
-Route::get('/', [BoardController::class, 'index'])->middleware(['auth', 'verified'])->name('boards.index');
+Route::get('/', [BoardController::class, 'index'])->middleware('auth')->name('boards.index');
 
 /*Route::get('/dashboard', function () {
     return view('dashboard');
@@ -35,18 +35,20 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
+// ログイン関連のルート（LoginControllerを使用）
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-//グループ化
-Route::middleware(['auth', 'verified'])->group(function () {
+
+
+//グループ化 
+Route::middleware('auth')->group(function () {
 
     Route::resource('boards', BoardController::class);
     Route::delete('/images/delete', [ImageController::class, 'destroy'])->name('images.destroy');
     Route::get('/users/edit_password', [UserController::class, 'edit_password'])->name('edit_password');
-    Route::put('/users/edet_passwoed', action: [UserController::class, 'update_password'])->name('update_password');
+    Route::put('/users/edit_password', action: [UserController::class, 'update_password'])->name('update_password');
     Route::post('favorites/{board_id}', [FavoriteController::class, 'store'])->name('favorites.store');
     Route::delete('favorites/{board_id}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
-    Route::get('boards', [LinkUrlController::class, 'index']);
 });

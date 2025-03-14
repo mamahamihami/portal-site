@@ -24,7 +24,7 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             // パスワードと確認パスワードが一致すること
-            'password' => 'required|confirmed',
+            'password' => 'required|confirmed|min:6',
         ]);
 
         $user = Auth::user();
@@ -37,7 +37,8 @@ class UserController extends Controller
 
         // 新しいパスワードを設定
         $user->password = bcrypt($request->input('password'));
-        $user->update();
+        $user->new_flag = 0;
+        $user->save();
 
         // 成功メッセージを表示してリダイレクト
         return to_route('boards.index')->with('flash_message', 'パスワードを更新しました。');

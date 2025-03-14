@@ -12,13 +12,12 @@ class ImageController extends Controller
     public function destroy(Request $request)
     {
         $image = Image::findOrFail($request->file_id);
+        $image->save();
 
         // ファイルの物理削除
-        Storage::delete(str_replace('storage/uploads/', 'public/uploads/', $image->file_path));
+        Storage::delete(str_replace('storage/files/', 'public/files/', $image->file_path));
 
         // データベースから削除
         $image->delete();
-
-        return response()->json(['message' => 'ファイルを削除しました。']);
     }
 }
